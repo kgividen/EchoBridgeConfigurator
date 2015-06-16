@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ng="http://angularjs.org">
+<head>
+    <style type="text/css">
+    body {
+        line-height: 1.5;
+        font-size: 14px;
+    }
+    </style>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.16/angular.js"></script>
+    <script type="text/javascript" src="bower_components/x2js/xml2json.js"></script>
+    <script type="text/javascript" src="bower_components/angular-xml/angular-xml.js"></script>
+    <script type="text/javascript" src="configurator.js"></script>
+</head>
+
+<body ng-app="configurator">
+
+<div ng-controller="ViewingController">
+
+<h3>Bridge settings</h3>
+	<label>Bridge server<input type="text" ng-model="bridge.base" size="150"></label>
+	<button type="button" ng-click="testUrl(bridge.base)">Go</button>
+<h3>Current devices</h3>
+	<table border=1>
+	<tr><td>NAME</td><td>ID</td><td>TYPE</td></tr>
+	<tr ng-repeat="device in bridge.devices">
+		<td>{{device.name}}</td>
+        <td>{{device.id}}</td>
+        <td>{{device.deviceType}}</td>
+		<td><button type="button" ng-click="testUrl(device.onUrl)">Test ON</button></td>
+		<td><button type="button" ng-click="testUrl(device.offUrl)">Test OFF</button></td>
+		<td><button type="button" ng-click="deleteDevice(device)">Delete</button></td>
+	</tr>
+	</table>
+</div>
+
+<div ng-controller="ISYController">
+    <h3>Get ISY devices</h3>
+    <label>ISY server<input type="text" ng-model="isy.server" size="150"></label><br/>
+    <label>User Name<input type="text" ng-model="isy.username" size="50"></label><br/>
+    <label>Password<input type="text" ng-model="isy.password" size="50"></label><br/>
+    <button ng-click="getDevices(isy.server,isy.username,isy.password)">Get Devices</button>
+    <h3>ISY devices</h3>
+
+    <table border=1>
+        <tr><td>NAME</td><td>ID</td><td>TYPE</td></tr>
+        <tr ng-repeat="device in isy.devices.nodes.node">
+            <td>{{device.name}}</td>
+            <td>{{device.address}}</td>
+            <td>{{device.type}}</td>
+            <td><button type="button" ng-click="testUrl(device.onUrl)">Test ON</button></td>
+            <td><button type="button" ng-click="testUrl(device.offUrl)">Test OFF</button></td>
+            <td><button type="button" ng-click="addDevice(device)">Add</button></td>
+        </tr>
+    </table>
+</div>
+
+<div ng-controller="AddingController">
+    <h3>Add a new device manually</h3>
+    You can generate on/off URLs by filling in the Vera server URL and device ID, or you
+    can fill them out manually.
+
+    <form ng-submit="addDevice()">
+        <label>Name <input type="text" ng-model="device.name" size="150"/></label><br/>
+        <label>Vera Server <input type="text" ng-model="vera.base" size="40"/></label>
+        <label>Device ID <input type="text" ng-model="vera.id"/></label><button type="button" ng-click="buildUrls()">Generate URLs</button><br/>
+        <label>On URL <input type="text" ng-model="device.onUrl" size="200"/></label>
+        <button type="button" ng-click="testUrl(device.onUrl)">Test</button><br/>
+        <label>Off URL <input type="text" ng-model="device.offUrl" size="200"/></label>
+        <button type="button" ng-click="testUrl(device.offUrl)">Test</button><br/>
+        <button type="submit">Add Device</button>
+    </form>
+</div>
+
+<div ng-controller="ErrorsController">
+<h3 ng-show='bridge.error != ""'>ERROR</h3>
+<div ng-show='bridge.error != ""'>
+{{bridge.error}}
+</div>
+</div>
+
+</body>
+</html>
