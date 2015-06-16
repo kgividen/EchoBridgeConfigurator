@@ -59,12 +59,6 @@ angular.module('configurator', ['xml'])
     }])
 
     .service('isyService', ["$http", function($http) {
-        $http.defaults.useXDomain = true;
-        $http.defaults.withCredentials = true;
-        delete $http.defaults.headers.common["X-Requested-With"];
-        $http.defaults.headers.common["Accept"] = "application/json";
-        $http.defaults.headers.common["Content-Type"] = "application/json";
-
         this.username = "kgividen";
         this.method = "http://";
         this.server = "192.168.111.4";
