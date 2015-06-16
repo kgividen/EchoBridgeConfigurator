@@ -37,10 +37,11 @@
 
 <div ng-controller="ISYController">
     <h3>Get ISY devices</h3>
+    <label>ISY method<input type="text" ng-model="isy.method" size="150"></label><br/>
     <label>ISY server<input type="text" ng-model="isy.server" size="150"></label><br/>
     <label>User Name<input type="text" ng-model="isy.username" size="50"></label><br/>
     <label>Password<input type="text" ng-model="isy.password" size="50"></label><br/>
-    <button ng-click="getDevices(isy.server,isy.username,isy.password)">Get Devices</button>
+    <button ng-click="getDevices(isy.method,isy.server,isy.username,isy.password)">Get Devices</button>
     <h3>ISY devices</h3>
 
     <table border=1>
@@ -63,8 +64,9 @@
 
     <form ng-submit="addDevice()">
         <label>Name <input type="text" ng-model="device.name" size="150"/></label><br/>
-        <label>Vera Server <input type="text" ng-model="vera.base" size="40"/></label>
-        <label>Device ID <input type="text" ng-model="vera.id"/></label><button type="button" ng-click="buildUrls()">Generate URLs</button><br/>
+        <label>ISY Server <input type="text" ng-model="server" size="40"/></label>
+        <label>Device Address <input type="text" ng-model="address"/></label>
+        <button type="button" ng-click="buildUrls()">Generate URLs</button><br/>
         <label>On URL <input type="text" ng-model="device.onUrl" size="200"/></label>
         <button type="button" ng-click="testUrl(device.onUrl)">Test</button><br/>
         <label>Off URL <input type="text" ng-model="device.offUrl" size="200"/></label>

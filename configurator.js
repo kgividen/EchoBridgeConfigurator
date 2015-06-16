@@ -66,12 +66,13 @@ angular.module('configurator', ['xml'])
         $http.defaults.headers.common["Content-Type"] = "application/json";
 
         this.username = "kgividen";
+        this.method = "http://";
         this.server = "192.168.111.4";
         this.password = "password";
         this.devices = "";
         var self = this;
-        this.getDevices = function (server, username, password) {
-            var url = "http://" + username + ":" + password + "@" + server + "/rest/nodes/";
+        this.getDevices = function (method, server, username, password) {
+            var url = method + username + ":" + password + "@" + server + "/rest/nodes/";
 
             return $http.get(url).then(
                 function(response) {
@@ -119,15 +120,11 @@ angular.module('configurator', ['xml'])
 
         $scope.bridge = bridgeService.state;
         $scope.device = {name: "", type: "switch", onUrl: "", offUrl: ""};
-        $scope.vera = {base: "http://192.168.1.144:3480", id: 1};
+        $scope.server = "192.168.111.4";
 
         $scope.buildUrls = function() {
-            $scope.device.onUrl = $scope.vera.base
-            + "/data_request?id=action&output_format=json&serviceId=urn:upnp-org:serviceId:SwitchPower1&action=SetTarget&newTargetValue=1&DeviceNum="
-            + $scope.vera.id;
-            $scope.device.offUrl = $scope.vera.base
-            + "/data_request?id=action&output_format=json&serviceId=urn:upnp-org:serviceId:SwitchPower1&action=SetTarget&newTargetValue=0&DeviceNum="
-            + $scope.vera.id;
+            $scope.device.onUrl = "http://" + $scope.server + "/rest/nodes/" + encodeURIComponent($scope.address) + "/cmd/DFON/100";
+            $scope.device.offUrl = "http://" + $scope.server + "/rest/nodes/" + encodeURIComponent($scope.address) + "/cmd/DFOF";
         };
 
         $scope.testUrl = function(url) {
@@ -153,7 +150,7 @@ angular.module('configurator', ['xml'])
         $scope.isy = isyService;
         $scope.devices = isyService.devices;
         $scope.getDevices = function(){
-            isyService.getDevices($scope.isy.server, $scope.isy.username, $scope.isy.password);
+            isyService.getDevices($scope.isy.method, $scope.isy.server, $scope.isy.username, $scope.isy.password);
         };
 
         $scope.testUrl = function(url) {
