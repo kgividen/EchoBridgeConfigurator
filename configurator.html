@@ -44,10 +44,11 @@
     <button ng-click="getDevices(isy.method,isy.server,isy.username,isy.password)">Get Devices</button>
     <h3>ISY devices</h3>
 
+    You can rename them before adding them.
     <table border=1>
-        <tr><td>NAME</td><td>ID</td><td>TYPE</td></tr>
+        <tr><td>NAME</td><td>Address</td><td>TYPE</td></tr>
         <tr ng-repeat="device in isy.devices.nodes.node">
-            <td>{{device.name}}</td>
+            <td><input type="text" ng-model="device.name"></td>
             <td>{{device.address}}</td>
             <td>{{device.type}}</td>
             <td><button type="button" ng-click="testUrl(device.onUrl)">Test ON</button></td>
