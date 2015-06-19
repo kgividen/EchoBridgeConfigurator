@@ -41,13 +41,21 @@
     <label>ISY server<input type="text" ng-model="isy.server" size="150"></label><br/>
     <label>User Name<input type="text" ng-model="isy.username" size="50"></label><br/>
     <label>Password<input type="text" ng-model="isy.password" size="50"></label><br/>
-    <button ng-click="getDevices(isy.method,isy.server,isy.username,isy.password)">Get Devices</button>
+    <button ng-click="getDevices(isy.method,isy.server,isy.username,isy.password)">Get Devices and Scenes</button>
+    <label style="color:red" ng-bind="isy.errorMsg"></label>
     <h3>ISY devices</h3>
-
     You can rename them before adding them.
     <table border=1>
         <tr><td>NAME</td><td>Address</td><td>TYPE</td></tr>
         <tr ng-repeat="device in isy.devices.nodes.node">
+            <td><input type="text" ng-model="device.name"></td>
+            <td>{{device.address}}</td>
+            <td>{{device.type}}</td>
+            <td><button type="button" ng-click="testUrl(device.onUrl)">Test ON</button></td>
+            <td><button type="button" ng-click="testUrl(device.offUrl)">Test OFF</button></td>
+            <td><button type="button" ng-click="addDevice(device)">Add</button></td>
+        </tr>
+        <tr ng-repeat="device in isy.devices.nodes.group">
             <td><input type="text" ng-model="device.name"></td>
             <td>{{device.address}}</td>
             <td>{{device.type}}</td>
@@ -66,6 +74,8 @@
     <form ng-submit="addDevice()">
         <label>Name <input type="text" ng-model="device.name" size="150"/></label><br/>
         <label>ISY Server <input type="text" ng-model="server" size="40"/></label>
+        <label>User Name <input type="text" ng-model="username"/></label>
+        <label>Password <input type="text" ng-model="password"/></label><br/>
         <label>Device Address <input type="text" ng-model="address"/></label>
         <button type="button" ng-click="buildUrls()">Generate URLs</button><br/>
         <label>On URL <input type="text" ng-model="device.onUrl" size="200"/></label>

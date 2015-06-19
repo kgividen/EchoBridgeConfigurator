@@ -64,21 +64,32 @@ angular.module('configurator', ['xml'])
         this.server = "192.168.111.4";
         this.password = "password";
         this.devices = "";
+        this.errorMsg = "";
         var self = this;
         this.getDevices = function (method, server, username, password) {
             var url = method + username + ":" + password + "@" + server + "/rest/nodes/";
 
-            return $http.get(url).then(
+            return $http.get(url).success(
                 function(response) {
-                    var devicesJSON = response.data;
+                    self.errorMsg = "";
+                    var devicesJSON = response;
                     angular.forEach(devicesJSON.nodes.node, function(node) {
                         node.onUrl = url + encodeURIComponent(node.address) + "/cmd/DFON/100";
                         node.offUrl = url + encodeURIComponent(node.address) + "/cmd/DFOF";
                     });
+
+                    //scenes
+                    angular.forEach(devicesJSON.nodes.group, function(node) {
+                        node.onUrl = url + encodeURIComponent(node.address) + "/cmd/DFON";
+                        node.offUrl = url + encodeURIComponent(node.address) + "/cmd/DFOF";
+                    });
                     self.devices = devicesJSON;
-                },
-                function(error) {
-                    console.log(error);
+                }
+            ).error(
+                function(data, status, headers, config) {
+                    console.log("err:" + status);
+                    self.errorMsg = "Error: " + status + " " + config.method + " " + config.url + " " +
+                         "If the error is a 401 that means something is wrong with the username or password";
                 }
             );
         };
@@ -115,10 +126,12 @@ angular.module('configurator', ['xml'])
         $scope.bridge = bridgeService.state;
         $scope.device = {name: "", type: "switch", onUrl: "", offUrl: ""};
         $scope.server = "192.168.111.4";
+        $scope.username = "kgividen";
+        $scope.password = "password";
 
         $scope.buildUrls = function() {
-            $scope.device.onUrl = "http://" + $scope.server + "/rest/nodes/" + encodeURIComponent($scope.address) + "/cmd/DFON/100";
-            $scope.device.offUrl = "http://" + $scope.server + "/rest/nodes/" + encodeURIComponent($scope.address) + "/cmd/DFOF";
+            $scope.device.onUrl = "http://" + $scope.username + ":" + $scope.password + "@" + $scope.server + "/rest/nodes/" + encodeURIComponent($scope.address) + "/cmd/DFON/100";
+            $scope.device.offUrl = "http://" + $scope.username + ":" + $scope.password + "@" + $scope.server + "/rest/nodes/" + encodeURIComponent($scope.address) + "/cmd/DFOF";
         };
 
         $scope.testUrl = function(url) {
@@ -142,6 +155,7 @@ angular.module('configurator', ['xml'])
 
     .controller('ISYController', ["$scope", "isyService", "bridgeService", function($scope, isyService, bridgeService) {
         $scope.isy = isyService;
+        $scope.errorMsg = isyService.errorMsg;
         $scope.devices = isyService.devices;
         $scope.getDevices = function(){
             isyService.getDevices($scope.isy.method, $scope.isy.server, $scope.isy.username, $scope.isy.password);
